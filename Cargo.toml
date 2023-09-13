@@ -1,0 +1,12 @@
+[package]
+name = "my-own-mini-redis"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1.17.0", features = ["full"] }
+bytes = "1.1.0"
+atoi = "1.0.0"
+rayon = "1.5.1"

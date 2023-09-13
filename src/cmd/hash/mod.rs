@@ -1,0 +1,16 @@
+mod h_del;
+mod h_exists;
+mod h_get;
+mod h_getall;
+mod h_incrby;
+mod h_incrby_float;
+mod h_keys;
+mod h_len;
+mod h_mget;
+mod h_mset;
+mod h_rand_field;
+mod h_scan;
+mod h_set;
+mod h_set_nx;
+mod h_strlen;
+mod h_vals;
