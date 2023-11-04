@@ -1,9 +1,12 @@
+use futures::{SinkExt, StreamExt};
 use tokio::{select, signal};
 use tokio::net::{TcpListener, TcpStream};
 use tokio::sync::broadcast;
 use tokio::sync::broadcast::Receiver;
+use tokio_util::codec::Framed;
 
 use crate::cmd::Cmd;
+use crate::codec::{LineCodec, RedisCodec, RedisFrame};
 use crate::connection::Connection;
 use crate::db::{Db, SharedDb};
 use crate::RedisResult;
@@ -61,37 +64,57 @@ impl Server {
 
 async fn process(socket: TcpStream, mut db: SharedDb, mut notify_shutdown: Receiver<()>) -> RedisResult<()> {
 
-
-    //读取二进制信息，将内容转换成Frame信息
-    let mut connection = Connection::new(socket);
+    // 将stream信息转换成编码
+    let mut framed = Framed::new(socket, RedisCodec);
 
     loop {
-        select! {
-            result=handle(&mut connection,&mut db) => {
+        if let Some(Ok(RedisFrame::Array(arr))) = framed.next().await {
 
-                println!("result");
-            }
-            _=notify_shutdown.recv()=>{
-                println!("任务结束，连接即将关闭");
-                break;
-            }
+            // 生成command
+
+
+
+
+        } else {
+            let errorFrame = RedisFrame::Error(" invalid command".to_string());
+
+            framed.send(errorFrame).await.unwrap();
         }
     }
 
 
+    // //读取二进制信息，将内容转换成Frame信息
+    // let mut connection = Connection::new(socket);
+    //
+    // loop {
+    //     select! {
+    //         result=handle(&mut connection,&mut db) => {
+    //
+    //             println!("result");
+    //         }
+    //         _=notify_shutdown.recv()=>{
+    //             println!("任务结束，连接即将关闭");
+    //             break;
+    //         }
+    //     }
+    // }
+
+
     Ok(())
 }
 
 
-async fn handle(connection: &mut Connection, db: &mut SharedDb) -> RedisResult<()> {
-    if let Some(frame) = connection.read_frame().await? {
+// async fn handle(connection: &mut Connection, db: &mut SharedDb) -> RedisResult<()> {
+//     if let Some(frame) = connection.read_frame().await? {
+//
+//         // 执行命令，
+//         //将命令转变为指令
+//         let command: Cmd = frame.try_into()?;
+//
+//         let frame = command.execute(db).await?;
+//         connection.write_frame(frame).await?;
+//     }
+//     Ok(())
+// }
 
-        // 执行命令，
-        //将命令转变为指令
-        let command: Cmd = frame.try_into()?;
 
-        let frame = command.execute(db).await?;
-        connection.write_frame(frame).await?;
-    }
-    Ok(())
-}

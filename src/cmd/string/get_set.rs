@@ -21,10 +21,10 @@ impl GetAndSet {
 
     pub(crate) async fn execute(self, db: &SharedDb) -> RedisResult<Frame> {
         let mut shared_db = db.lock();
-        if let Some(data) = shared_db.get_bytes(self.0.as_str()) {
-            shared_db.update_bytes(self.key, self.value);
-            return Ok(Frame::Bulk(data));
-        }
+        // if let Some(data) = shared_db.get_bytes(self.0.as_str()) {
+        //     shared_db.update_bytes(self.key, self.value);
+        //     return Ok(Frame::Bulk(data));
+        // }
         Ok(Frame::nil())
     }
 }

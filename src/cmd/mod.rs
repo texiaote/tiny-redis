@@ -21,6 +21,10 @@ mod unknown;
 use ping::Ping;
 use crate::cmd::string::{DecrBy, MultiGet};
 use crate::cmd::unknown::Unknown;
+use crate::codec::RedisFrame;
+
+
+pub(crate) trait Command {}
 
 #[derive(Debug)]
 pub(crate) enum Cmd {
@@ -77,6 +81,14 @@ impl TryFrom<Frame> for Cmd {
         frame_iter.finish()?;
 
         command
+    }
+}
+
+impl TryFrom<Vec<RedisFrame>> for Cmd {
+    type Error = std::io::Error;
+
+    fn try_from(value: Vec<RedisFrame>) -> Result<Self, Self::Error> {
+        todo!()
     }
 }
 

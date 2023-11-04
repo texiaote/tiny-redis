@@ -5,6 +5,7 @@ mod frame;
 mod connection;
 mod cmd;
 mod db;
+pub mod codec;
 
 
 pub type RedisResult<T> = Result<T, Box<dyn Error + Send + Sync>>;
